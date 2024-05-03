@@ -93,7 +93,8 @@ defmodule WalEx.ConfigTest do
                webhook_signing_secret: nil,
                event_relay: nil,
                slot_name: "my_app_walex",
-               durable_slot: false
+               durable_slot: false,
+               start_location: "0/0"
              ] == Config.get_configs(@app_name)
     end
   end

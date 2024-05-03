@@ -16,6 +16,12 @@ defmodule WalEx.Replication.QueryBuilder do
   end
 
   def start_replication_slot(state) do
-    "START_REPLICATION SLOT #{state.slot_name} LOGICAL 0/0 (proto_version '1', publication_names '#{state.publication}')"
+    start_location =
+      case state.start_location do
+        {:value, lsn} -> lsn
+        {:callback, callback} -> callback.()
+      end
+
+    "START_REPLICATION SLOT #{state.slot_name} LOGICAL #{start_location} (proto_version '1', publication_names '#{state.publication}')"
   end
 end

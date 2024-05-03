@@ -48,12 +48,14 @@ defmodule WalEx.Replication.Server do
     [
       slot_name: slot_name,
       publication: publication,
-      durable_slot: durable_slot
+      durable_slot: durable_slot,
+      start_location: start_location
     ] =
       WalEx.Config.get_configs(app_name, [
         :slot_name,
         :publication,
-        :durable_slot
+        :durable_slot,
+        :start_location
       ])
 
     state = %{
@@ -61,7 +63,8 @@ defmodule WalEx.Replication.Server do
       app_name: app_name,
       slot_name: slot_name,
       publication: publication,
-      durable_slot: durable_slot
+      durable_slot: durable_slot,
+      start_location: start_location
     }
 
     {:ok, state}
