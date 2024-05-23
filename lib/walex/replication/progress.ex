@@ -13,7 +13,7 @@ defmodule WalEx.Replication.Progress do
 
   def reset(app_name) do
     name = Registry.set_name(:set_agent, __MODULE__, app_name)
-    Agent.update(name, fn _ -> @default_value end)
+    Agent.update(name, fn _ -> @default_value end, :infinity)
   end
 
   @spec oldest_running_wal_end(any()) :: integer() | nil
@@ -29,12 +29,12 @@ defmodule WalEx.Replication.Progress do
 
   def begin(app_name, {_, wal_end}) do
     name = Registry.set_name(:set_agent, __MODULE__, app_name)
-    Agent.update(name, fn set -> :gb_sets.insert(wal_end, set) end)
+    Agent.update(name, fn set -> :gb_sets.add(wal_end, set) end, :infinity)
   end
 
   def done(app_name, {_, wal_end}) do
     name = Registry.set_name(:set_agent, __MODULE__, app_name)
-    Agent.update(name, fn set -> :gb_sets.del_element(wal_end, set) end)
+    Agent.update(name, fn set -> :gb_sets.del_element(wal_end, set) end, :infinity)
   end
 
   defp current_state(app_name) do
