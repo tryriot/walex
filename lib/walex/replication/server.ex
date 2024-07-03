@@ -90,10 +90,10 @@ defmodule WalEx.Replication.Server do
   def handle_result(results, %{step: :publication_exists} = state) do
     case results do
       [%Postgrex.Result{num_rows: 0}] ->
-        raise "Publication doesn't exists. publication: #{inspect(state.publication)}"
+        {:disconnect, {"Publication doesn't exists. publication", state.publication}}
 
       _ ->
-        raise "Unexpected result when checking if publication exists. #{inspect(results)}"
+        {:disconnect, {"Unexpected result when checking if publication exists", results}}
     end
   end
 
@@ -114,13 +114,13 @@ defmodule WalEx.Replication.Server do
         {:stream, query, [], %{state | step: :streaming}}
 
       "t" ->
-        raise "Durable slot already active"
+        {:disconnect, "Durable slot already active"}
     end
   end
 
   @impl true
   def handle_result(results, %{step: :slot_exists}) do
-    raise "Failed to check if durable slot already exists. #{inspect(results)}"
+    {:disconnect, {"Failed to check if durable slot already exists", results}}
   end
 
   @impl true
@@ -132,7 +132,7 @@ defmodule WalEx.Replication.Server do
   @impl true
   def handle_result(%Postgrex.Error{} = error, %{step: :create_slot}) do
     # if durable slot, can happen if multiple instances try to create the same slot
-    raise "Failed to create replication slot, #{inspect(error)}"
+    {:disconnect, {"Failed to create replication slot", error}}
   end
 
   @impl true
