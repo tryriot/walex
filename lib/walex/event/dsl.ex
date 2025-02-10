@@ -1,6 +1,7 @@
 defmodule WalEx.Event.Dsl do
   defmacro process_events_async(events, functions) do
-    module = hd(__CALLER__.context_modules)
+    [_ | _] = __CALLER__.context_modules
+    module = List.first(__CALLER__.context_modules)
 
     quote do
       Enum.each(unquote(events), fn event ->
