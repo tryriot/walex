@@ -50,6 +50,8 @@ defmodule WalEx.Replication.Server do
       raw_messages: true
     }
 
+    Process.flag(:message_queue_data, :off_heap)
+
     {:ok, state}
   end
 
